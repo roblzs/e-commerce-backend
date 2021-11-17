@@ -4,6 +4,9 @@ const categoryCtrl = {
     create: async (req: any, res: any) => {
         try {
             const {text} = req.body;
+            if(!text){
+                return res.status(400).json({err: "Please enter category text"});
+            }
 
             const newCategory = new Categories({
                 text

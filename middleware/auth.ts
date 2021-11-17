@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken"
 import Users from "../models/userModel"
 
-
 const auth = async (req: any, res: any) => {
     const token = req.headers.authorization;
     if(!token){
@@ -18,6 +17,5 @@ const auth = async (req: any, res: any) => {
         }
     }
 }
-
 
 export default auth

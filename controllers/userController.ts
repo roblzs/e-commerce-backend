@@ -47,15 +47,16 @@ const userCtrl = {
                 refresh_token: refresh_token
             });
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         };
     },
     login: async (req: any, res: any) => {
         try {
             const {email, password} = req.body;
+
             const user = await Users.findOne({email});
             if(!user){
-                return res.status(400).json({msg: "This email does not exist"});
+                return res.status(400).json({msg: "A user with this email does not exist"});
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
@@ -65,14 +66,15 @@ const userCtrl = {
 
             const refresh_token = createRefreshToken({id: user._id});
             res.cookie("refreshtoken", refresh_token, {
-                httpOnly: true,
-                path: "/user/refresh_token",
                 maxAge: 7*24*60*60*1000
             });
 
-            res.json({msg: "Login success!"});
+            res.json({
+                msg: "Login success!",
+                refresh_token: refresh_token
+            });
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         }
     },
     getAccessToken: async (req: any, res: any) => {
@@ -113,7 +115,7 @@ const userCtrl = {
 
             res.json(user);
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         }
     },
     getAllUsers: async (req: any, res: any) => {
@@ -122,7 +124,7 @@ const userCtrl = {
 
             res.json(users);
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         }
     },
     logout: async (req: any, res: any) => {
@@ -130,7 +132,7 @@ const userCtrl = {
             res.clearCookie("refreshtoken", {path: "/user/refresh_token"});
             return res.json({msg: "Logged out"});
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         }
     },
     updateUser: async (req: any, res: any) => {
@@ -155,7 +157,7 @@ const userCtrl = {
 
             res.json({msg: "Update Success"});
         } catch (err: any) {
-            return res.status(500).json({msg: err.message});
+            return res.status(500).json({err: err.message});
         }
     },
     deleteUser: async (req: any, res: any) => {

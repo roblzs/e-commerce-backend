@@ -38,7 +38,7 @@ const userCtrl = {
             await newUser.save();
 
             const refresh_token = createRefreshToken({id: newUser._id});
-            res.cookie("accesstoken", refresh_token, {
+            res.cookie("refreshtoken", refresh_token, {
                 maxAge: 7*24*60*60*1000
             });
 
@@ -65,7 +65,7 @@ const userCtrl = {
             }
 
             const refresh_token = createRefreshToken({id: user._id});
-            res.cookie("accesstoken", refresh_token, {
+            res.cookie("refreshtoken", refresh_token, {
                 maxAge: 7*24*60*60*1000
             });
 
@@ -82,22 +82,22 @@ const userCtrl = {
             const rf_token_secret: string | undefined = process.env.REFRESH_TOKEN_SECRET;
     
             if(!rf_token_secret){
-                return res.status(400).json({err: "Something went wrong!"});
+                return res.status(400).json({err: "Something went wrong"});
             }
     
             const rf_token = req.headers.authorization;
             if(!rf_token){
-                return res.status(400).json({err: "Please login now!"});
+                return res.status(400).json({err: "Please login now"});
             }
     
             const result: any = jwt.verify(rf_token, rf_token_secret);
             if(!result){
-                return res.status(400).json({err: "Your token is incorrect or has expired."});
+                return res.status(400).json({err: "Your token is incorrect or has expired"});
             }
     
             const user = await Users.findById(result.id).select("-password");
             if(!user){
-                return res.status(400).json({err: "User does not exist."})
+                return res.status(400).json({err: "User does not exist"})
             }
     
             const access_token = createAccessToken({id: user._id});
@@ -114,22 +114,22 @@ const userCtrl = {
             const access_token_secret: string | undefined = process.env.ACCESS_TOKEN_SECRET;
     
             if(!access_token_secret){
-                return res.status(400).json({err: "Something went wrong!"});
+                return res.status(400).json({err: "Something went wrong"});
             }
     
             const rf_token = req.headers.authorization;
             if(!rf_token){
-                return res.status(400).json({err: "Please login now!"});
+                return res.status(400).json({err: "Please login now"});
             }
     
             const result: any = jwt.verify(rf_token, access_token_secret);
             if(!result){
-                return res.status(400).json({err: "Your token is incorrect or has expired."});
+                return res.status(400).json({err: "Your token is incorrect or has expired"});
             }
 
             const user = await Users.findById(result.id).select("-password");
             if(!user){
-                return res.status(400).json({err: "User does not exist."})
+                return res.status(400).json({err: "User does not exist"})
             }
     
             res.json(user);
@@ -148,7 +148,7 @@ const userCtrl = {
     },
     logout: async (req: any, res: any) => {
         try {
-            res.clearCookie("refreshtoken", {path: "/user/refresh_token"});
+            res.clearCookie("refreshtoken");
             return res.json({msg: "Logged out"});
         } catch (err: any) {
             return res.status(500).json({err: err.message});
@@ -156,14 +156,35 @@ const userCtrl = {
     },
     updateUser: async (req: any, res: any) => {
         try {
-            const {name, email, phoneNumber} = req.body
-            await Users.findOneAndUpdate({_id: req.user.id}, {
-                name, email, phoneNumber
-            })
+            const {name, email, phoneNumber} = req.body;
+            
+            const access_token = req.headers.authorization;
+            if(!access_token){
+                return res.status(400).json({err: "Please login now"});
+            }
 
-            res.json({msg: "Update Success"})
+            const access_token_secret: string | undefined = process.env.ACCESS_TOKEN_SECRET;
+            if(!access_token_secret){
+                return res.status(400).json({err: "Something went wrong"});
+            }
+    
+            const result: any = jwt.verify(access_token, access_token_secret);
+            if(!result){
+                return res.status(400).json({err: "Your token is incorrect or has expired"});
+            }
+
+            const user = await Users.findById(result.id).select("-password");
+            if(!user){
+                return res.status(400).json({err: "User does not exist"});
+            }
+
+            await user.updateOne({
+                name, email, phoneNumber
+            });
+
+            res.json({msg: "Update Success"});
         } catch (err: any) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({msg: err.message});
         }
     },
     updateUsersRole: async (req: any, res: any) => {

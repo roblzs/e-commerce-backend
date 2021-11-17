@@ -14,10 +14,8 @@ router.route("/auth/register")
 router.route("/auth/login")
     .post(userCtrl.login)
 
-router.route("/:id")
-    
-
 router.route("/info")
     .get(auth, userCtrl.getUserInfo)
+    .put(auth, userCtrl.updateUser)
 
 export default router;

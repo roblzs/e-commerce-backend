@@ -16,6 +16,15 @@ const categoryCtrl = {
             return res.status(500).json({err: err.message});
         }
     },
+    get: async (req: any, res: any) => {
+        try {
+            const categories = await Categories.find();
+
+            res.json(categories);
+        } catch (err: any) {
+            return res.status(500).json({err: err.message});
+        }
+    },
     update: async (req: any, res: any) => {
         try {
             const {text} = req.body;

@@ -3,7 +3,6 @@ import express from "express";
 import * as dotenv from "dotenv";
 import mongoose, { ConnectOptions } from "mongoose";
 import helmet from "helmet";
-import {Jwt} from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 dotenv.config();

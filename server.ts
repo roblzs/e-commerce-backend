@@ -6,6 +6,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import userRouter from "./routes/userRouter";
+import categoryRouter from "./routes/categoryRouter";
 dotenv.config();
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(fileUpload({
 }));
 
 app.use("/api/user", userRouter);
+app.use("/api/categories", categoryRouter);
 
 const URI = process.env.MONGODB_URL;
 
@@ -25,7 +27,7 @@ if(URI){
     mongoose.connect(URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-    }as ConnectOptions, err => {
+    }as ConnectOptions, (err) => {
         if (err) throw err;
         console.log("Connected to DB")
     });

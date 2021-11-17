@@ -2,14 +2,14 @@ import express from "express";
 import categoryCtrl from "../controllers/categoryController";
 import authAdmin from "../middleware/authAdmin";
 
-const router = express.Router();
+const categoryRouter = express.Router();
 
-router.route("/")
+categoryRouter.route("/")
     .get(categoryCtrl.get)
     .post(authAdmin, categoryCtrl.create)
 
-router.route("/:id")
+categoryRouter.route("/:id")
     .put(authAdmin, categoryCtrl.update)
     .delete(authAdmin, categoryCtrl.delete)
 
-export default router;
+export default categoryRouter;

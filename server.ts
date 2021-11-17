@@ -9,6 +9,7 @@ import userRouter from "./routes/userRouter";
 import categoryRouter from "./routes/categoryRouter";
 import uploadRouter from "./routes/uploadRouter";
 import productRouter from "./routes/productRouter";
+import orderRouter from "./routes/orderRouter";
 dotenv.config();
 
 const app = express();
@@ -24,6 +25,7 @@ app.use("/api/user", userRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/products", productRouter);
+app.use("/api/orders", orderRouter);
 
 const URI = process.env.MONGODB_URL;
 

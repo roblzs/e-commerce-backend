@@ -16,7 +16,7 @@ app.use(cookieParser());
 app.use(fileUpload({
     useTempFiles: true,
 }));
-
+``
 app.use("/api/user", userRouter);
 
 const URI = process.env.MONGODB_URL;

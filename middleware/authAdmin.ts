@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import Users from "../models/userModel"
 
-const authAdmin = async (req: any, res: any) => {
+const authAdmin = async (req: any, res: any, next: any) => {
     const token = req.headers.authorization;
     if(!token){
         return res.status(400).json({err: "Invalid Authentication."})
@@ -18,7 +18,7 @@ const authAdmin = async (req: any, res: any) => {
                 return res.status(400).json({err: "Invalid Authentication."});
             }
 
-            return user;
+            next();
         }
     }
 }

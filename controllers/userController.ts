@@ -7,17 +7,15 @@ import { createAccessToken, createRefreshToken } from "../utils/generateToken";
 const userCtrl = {
     register: async (req: any, res: any) => {
         try {
-            const {name, username, email, password} = req.body;
+            const {name, email, phoneNumber, password} = req.body;
             
-            if(!name || !username || !email || !password){
+            if(!name || !email || !password || !phoneNumber){
                 return res.status(400).json({msg: "Please fill in all fields"});
             }
-                
 
             if(!validateEmail(email)){
                 return res.status(400).json({msg: "Invalid emails"});
             }
-                
 
             const user = await Users.findOne({email});
             if(user){
@@ -25,21 +23,29 @@ const userCtrl = {
             }
 
             if(password.length < 6){
-                return res.status(400).json({msg: "Password must be at least 6 characters"});
+                return res.status(400).json({msg: "Password must be at least 6 characters long"});
             }
 
             const passwordHash = await bcrypt.hash(password, 12);
 
             const newUser = new Users({
                 name, 
-                username, 
                 email, 
+                phoneNumber,
                 password: passwordHash
             });
 
             await newUser.save();
 
-            res.json({msg: "Register Success!"});
+            const refresh_token = createRefreshToken({id: newUser._id});
+            res.cookie("refreshtoken", refresh_token, {
+                maxAge: 7*24*60*60*1000
+            });
+
+            res.json({
+                msg: "Register Success!",
+                refresh_token: refresh_token
+            });
         } catch (err: any) {
             return res.status(500).json({msg: err.message});
         };
@@ -54,7 +60,7 @@ const userCtrl = {
 
             const isMatch = await bcrypt.compare(password, user.password);
             if(!isMatch){
-                return res.status(400).json({msg: "Password is incorrect"});
+                return res.status(400).json({msg: "Incorrect password"});
             }
 
             const refresh_token = createRefreshToken({id: user._id});

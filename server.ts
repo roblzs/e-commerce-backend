@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
 import userRouter from "./routes/userRouter";
 import categoryRouter from "./routes/categoryRouter";
+import uploadRouter from "./routes/uploadRouter";
 dotenv.config();
 
 const app = express();
@@ -20,6 +21,7 @@ app.use(fileUpload({
 
 app.use("/api/user", userRouter);
 app.use("/api/categories", categoryRouter);
+app.use("/api/upload", uploadRouter);
 
 const URI = process.env.MONGODB_URL;
 

@@ -1,4 +1,5 @@
 import Categories from "../models/categoryModel";
+import Products from "../models/productModel";
 
 const categoryCtrl = {
     create: async (req: any, res: any) => {
@@ -53,7 +54,11 @@ const categoryCtrl = {
                 return res.status(500).json({err: "Something went wrong"});
             }
 
-            await Categories.findByIdAndDelete({_id: categoryId});
+            const category = await Categories.findById({_id: categoryId});
+
+            await Products.deleteMany({category: category.text})
+            
+            await category.deleteOne();
 
             res.json({msg: "Delete Success"});
         } catch (err: any) {

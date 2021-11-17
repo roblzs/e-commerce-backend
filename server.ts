@@ -5,6 +5,7 @@ import mongoose, { ConnectOptions } from "mongoose";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
+import userRouter from "./routes/userRouter";
 dotenv.config();
 
 const app = express();
@@ -15,6 +16,8 @@ app.use(cookieParser());
 app.use(fileUpload({
     useTempFiles: true,
 }));
+
+app.use("/api/user", userRouter);
 
 const URI = process.env.MONGODB_URL;
 
@@ -32,5 +35,3 @@ if(URI){
         console.log("Server running on port", PORT);
     });
 }
-
-app.get("/", (req, res) => res.send("Hello world"));

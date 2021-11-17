@@ -7,3 +7,5 @@ const router = express.Router();
 router.route("/")
     .post(userCtrl.register)
     .get(authAdmin, userCtrl.getAllUsers)
+
+export default router;

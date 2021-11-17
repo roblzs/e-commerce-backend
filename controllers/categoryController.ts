@@ -34,11 +34,25 @@ const categoryCtrl = {
                 return res.status(500).json({err: "Something went wrong"});
             }
 
-            await Categories.findOneAndUpdate({_id: categoryId}, {
+            await Categories.findByIdAndUpdate({_id: categoryId}, {
                 text
             });
 
             res.json({msg: "Update Success"});
+        } catch (err: any) {
+            return res.status(500).json({err: err.message});
+        }
+    },
+    delete: async (req: any, res: any) => {
+        try {
+            const categoryId = req.params.id;
+            if(!categoryId){
+                return res.status(500).json({err: "Something went wrong"});
+            }
+
+            await Categories.findByIdAndDelete({_id: categoryId});
+
+            res.json({msg: "Delete Success"});
         } catch (err: any) {
             return res.status(500).json({err: err.message});
         }

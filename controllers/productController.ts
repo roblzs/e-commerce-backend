@@ -60,6 +60,20 @@ const productCtrl = {
             return res.status(500).json({err: err.message});
         }
     },
+    getOne: async (req: any, res: any) => {
+        try {
+            const productId = req.params.id;
+            if(!productId){
+                return res.status(500).json({err: "Something went wrong"});
+            }
+
+            const product = await Products.findById({_id: productId});
+
+            res.json(product);
+        } catch (err: any) {
+            return res.status(500).json({err: err.message});
+        }
+    },
 };
 
 export default productCtrl;

@@ -9,6 +9,7 @@ uploadRouter.route("/")
     .post(authAdmin, productCtrl.create)
 
 uploadRouter.route("/:id")
+    .get(productCtrl.getOne)
     .put(authAdmin, productCtrl.update)
     .delete(authAdmin, productCtrl.delete)
 

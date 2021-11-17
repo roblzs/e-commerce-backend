@@ -1,18 +1,18 @@
-import Categories from "../models/categoryModel";
+import Products from "../models/productModel";
 
-const categoryCtrl = {
+const productCtrl = {
     create: async (req: any, res: any) => {
         try {
-            const {text} = req.body;
-            if(!text){
-                return res.status(400).json({err: "Please enter category text"});
+            const {name, description, price, stock, category, images} = req.body;
+            if(!name || !description || !price || !stock || !category || !images){
+                return res.status(400).json({err: "Please enter all fields"});
             }
 
-            const newCategory = new Categories({
-                text
+            const newProduct = new Products({
+                name, description, price, stock, category, images
             });
 
-            await newCategory.save();
+            await newProduct.save();
 
             res.json({msg: "Create Success"});
         } catch (err: any) {
@@ -21,24 +21,24 @@ const categoryCtrl = {
     },
     get: async (req: any, res: any) => {
         try {
-            const categories = await Categories.find();
+            const products = await Products.find();
 
-            res.json(categories);
+            res.json(products);
         } catch (err: any) {
             return res.status(500).json({err: err.message});
         }
     },
     update: async (req: any, res: any) => {
         try {
-            const {text} = req.body;
+            const {name, description, price, stock, category, images} = req.body;
 
-            const categoryId = req.params.id;
-            if(!categoryId){
+            const productId = req.params.id;
+            if(!productId){
                 return res.status(500).json({err: "Something went wrong"});
             }
 
-            await Categories.findByIdAndUpdate({_id: categoryId}, {
-                text
+            await Products.findByIdAndUpdate({_id: productId}, {
+                name, description, price, stock, category, images
             });
 
             res.json({msg: "Update Success"});
@@ -48,12 +48,12 @@ const categoryCtrl = {
     },
     delete: async (req: any, res: any) => {
         try {
-            const categoryId = req.params.id;
-            if(!categoryId){
+            const productId = req.params.id;
+            if(!productId){
                 return res.status(500).json({err: "Something went wrong"});
             }
 
-            await Categories.findByIdAndDelete({_id: categoryId});
+            await Products.findByIdAndDelete({_id: productId});
 
             res.json({msg: "Delete Success"});
         } catch (err: any) {
@@ -62,4 +62,4 @@ const categoryCtrl = {
     },
 };
 
-export default categoryCtrl;
+export default productCtrl;

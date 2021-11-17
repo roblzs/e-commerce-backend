@@ -9,7 +9,7 @@ orderRouter.route("/")
     .get(authAdmin, orderCtrl.getAll)
 
 orderRouter.route("/:id")
-    .get(orderCtrl.getOne)
+    .get(authAdmin, orderCtrl.getOne)
     .delete(authAdmin, orderCtrl.delete)
 
 export default orderRouter;

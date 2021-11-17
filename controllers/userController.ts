@@ -191,7 +191,12 @@ const userCtrl = {
         try {
             const {role} = req.body;
 
-            await Users.findOneAndUpdate({_id: req.params.id}, {
+            const userId = req.params.id;
+            if(!userId){
+                return res.status(500).json({err: "Something went wrong"});
+            }
+
+            await Users.findOneAndUpdate({_id: userId}, {
                 role
             });
 

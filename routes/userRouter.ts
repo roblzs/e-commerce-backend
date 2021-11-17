@@ -18,4 +18,7 @@ router.route("/info")
     .get(auth, userCtrl.getUserInfo)
     .put(auth, userCtrl.updateUser)
 
+router.route("/admin/:id")
+    .put(authAdmin, userCtrl.updateUsersRole)
+
 export default router;

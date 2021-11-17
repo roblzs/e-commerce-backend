@@ -1,15 +1,18 @@
 import Orders from "../models/orderModel";
+import Products from "../models/productModel";
 
 interface Product{
+    _id: string;
     name: string;
     description: string;
     price: number;
     stock: number;
+    sold: number;
     category: string;
     images: string[];
 }
 
-const categoryCtrl = {
+const orderCtrl = {
     order: async (req: any, res: any) => {
         try {
             const {name, email, phoneNumber, products, address, city, date} = req.body;
@@ -18,12 +21,28 @@ const categoryCtrl = {
             }
 
             let total = 0;
-            products.forEach((product: Product) => {
-                total += product.price;
-            });
+            let soldProductIds: string[] = [];
+
+            products
+                .filter((product: Product) => !soldProductIds.includes(product._id))
+                .forEach((product: Product) => {
+                    if(!soldProductIds.includes(product._id)){
+                        let quantity = products.filter((p: Product) => p._id === product._id).length;
+                        total += (product.price * quantity);
+                        soldProductIds.push(product._id);
+                        sell(product._id, quantity, product.sold, product.stock);
+                    }
+                });
 
             const newOrder = new Orders({
-                name, email, phoneNumber, products, address, city, date, total
+                name, 
+                email, 
+                phoneNumber, 
+                products, 
+                address, 
+                city, 
+                date, 
+                total
             });
 
             await newOrder.save();
@@ -72,4 +91,14 @@ const categoryCtrl = {
     },
 };
 
-export default categoryCtrl;
+const sell = async (id: string, quantity: number, oldSold: number, oldStock: number) => {
+    let newSold = oldSold + quantity;
+    let newQuantity = oldStock - quantity;
+
+    await Products.findByIdAndUpdate({_id: id}, {
+        sold: newSold,
+        stock: newQuantity,
+    });
+}
+
+export default orderCtrl;

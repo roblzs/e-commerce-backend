@@ -20,5 +20,6 @@ router.route("/info")
 
 router.route("/admin/:id")
     .put(authAdmin, userCtrl.updateUsersRole)
+    .delete(authAdmin, userCtrl.deleteUser)
 
 export default router;

@@ -207,11 +207,16 @@ const userCtrl = {
     },
     deleteUser: async (req: any, res: any) => {
         try {
-            await Users.findByIdAndDelete(req.params.id)
+            const userId = req.params.id;
+            if(!userId){
+                return res.status(500).json({err: "Something went wrong"});
+            }
 
-            res.json({msg: "Delete Success"})
+            await Users.findByIdAndDelete(userId);
+
+            res.json({msg: "Delete Success"});
         } catch (err: any) {
-            return res.status(500).json({msg: err.message})
+            return res.status(500).json({msg: err.message});
         }
     },
 };

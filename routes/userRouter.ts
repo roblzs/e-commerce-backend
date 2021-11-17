@@ -14,6 +14,9 @@ router.route("/auth/register")
 router.route("/auth/login")
     .post(userCtrl.login)
 
+router.route("/auth/logout")
+    .post(auth, userCtrl.logout)
+
 router.route("/info")
     .get(auth, userCtrl.getUserInfo)
     .put(auth, userCtrl.updateUser)

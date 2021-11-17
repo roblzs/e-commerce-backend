@@ -1,20 +1,25 @@
 import jwt from "jsonwebtoken"
-import Users from "../models/userModel"
 
-const auth = async (req: any, res: any) => {
-    const token = req.headers.authorization;
-    if(!token){
-        return res.status(400).json({err: "Invalid Authentication."})
-    }
+const auth = async (req: any, res: any, next: any) => {
+    try{
+        const token = req.headers.authorization;
+        if(!token){
+            return res.status(400).json({err: "Invalid Authentication."})
+        }
 
-    if(process.env.ACCESS_TOKEN_SECRET){
-        const decoded: any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const access_token_secret = process.env.ACCESS_TOKEN_SECRET;
+        if(!access_token_secret){
+            return res.status(500).json({err: "Something went wrong"});
+        }
+
+        const decoded: any = jwt.verify(token, access_token_secret);
         if(!decoded){
             return res.status(400).json({err: "Invalid Authentication."});
-        }else{
-            const user = await Users.findOne({_id: decoded.id})
-            return user;
         }
+         
+        next();
+    }catch (err: any){
+        res.status(500).json({err: err.message});
     }
 }
 
